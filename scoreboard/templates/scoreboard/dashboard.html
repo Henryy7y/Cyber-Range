@@ -38,12 +38,12 @@
                     {% for exercise in exercises %}
                     <div class="border border-cyber rounded-xl p-6 hover-cyber hover:text-white transition duration-300">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xl font-semibold cursor-pointer" onclick="redirectToDetails('{{ exercise.exName }}', '{{ exercise.exDate|date:"Y-m-d H:i:s" }}', '{{ exercise.exScore }}', '{{ exercise.exCriteria1|yesno:"true,false" }}', '{{ exercise.exCriteria2|yesno:"true,false" }}', '{{ exercise.exCriteria3|yesno:"true,false" }}', '{{ exercise.exCriteria4|yesno:"true,false" }}', '{{ exercise.exCriteria5|yesno:"true,false" }}', '{{ exercise.exCriteria6|yesno:"true,false" }}')">
+                            <h3 class="text-xl font-semibold cursor-pointer" onclick="passExLogID('{{ exercise.exLogID }}')">
                                 {{ exercise.exName }}
                             </h3>
                             <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Completed</span>
                         </div>
-                        <p class="text-sm text-gray-600 mb-2">Date: {{ exercise.exDate|date:"F d, Y H:i" }}</p>
+                        <p class="text-sm text-gray-600 mb-2">Date: {{ exercise.exDateTime|date:"F d, Y H:i" }}</p>
                         <div class="flex items-center">
                             <div class="text-3xl font-bold mr-4">{% widthratio exercise.exScore 60 100 %}%</div>
                             <div class="flex-grow">
@@ -75,12 +75,7 @@
                 </svg>
                 <h3 class="text-xl font-semibold mb-2">Total Score</h3>
                 <p class="text-3xl font-bold text-purple-600">
-                    {% with total_score=0 %}
-                        {% for exercise in exercises %}
-                            {% with total_score=total_score|add:exercise.exScore %}{% endwith %}
-                        {% endfor %}
-                        {{ total_score }}
-                    {% endwith %}
+                    {{ total_score }}
                 </p>
             </div>
             <div class="bg-white rounded-2xl shadow-xl p-6 text-center transform hover:scale-105 transition duration-300">
@@ -100,24 +95,12 @@
     </footer>
 
     <script>
-        function redirectToDetails(exName, exDate, exScore, exCriteria1, exCriteria2, exCriteria3, exCriteria4, exCriteria5, exCriteria6) {
-            const params = new URLSearchParams({
-                exName: exName,
-                exDate: exDate,
-                exScore: exScore,
-                exCriteria1: exCriteria1,
-                exCriteria2: exCriteria2,
-                exCriteria3: exCriteria3,
-                exCriteria4: exCriteria4,
-                exCriteria5: exCriteria5,
-                exCriteria6: exCriteria6
-            });
-            window.location.href = `{% url 'details' %}?${params.toString()}`;
+        function viewAvailableExercises() {
+            window.location.href = "{% url 'exercise_list' %}";
         }
 
-        function viewAvailableExercises() {
-            // Redirect to the page with available exercises
-            window.location.href = "{% url 'exercise_list' %}";
+        function passExLogID(exLogID) {
+            window.location.href = "{% url 'details' %}?exLogID=" + exLogID;
         }
     </script>
 </body>

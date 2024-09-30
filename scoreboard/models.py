@@ -51,5 +51,11 @@ class ExLog(models.Model):
 
     def __str__(self):
         return self.exPlayerName
+    
+    @property
+    def exScore(self):
+        criteria = [self.exCriteria1, self.exCriteria2, self.exCriteria3,
+                    self.exCriteria4, self.exCriteria5, self.exCriteria6]
+        return 10 * sum(criteria)
 
     

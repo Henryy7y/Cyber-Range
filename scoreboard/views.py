@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-from .models import SMBExercise  # Add this import
+from .models import SMBExercise, ExLog, ExInfo  # Add this import
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth.models import User  # Add this import
@@ -19,8 +19,9 @@ def dummy_score(request):
 
 @login_required
 def dashboard_view(request):
-    exercises = SMBExercise.objects.filter(exPlayer=request.user.username)
-    return render(request, 'scoreboard/dashboard.html', {'exercises': exercises, 'user': request.user})
+    ex_logs = ExLog.objects.filter(exPlayerName=request.user.username)
+    total_score = sum(ex_log.exScore for ex_log in ex_logs)
+    return render(request, 'scoreboard/dashboard.html', {'user': request.user, 'exercises': ex_logs, 'total_score': total_score})
 
 def login_view(request):
     if request.method == 'POST':
@@ -65,7 +66,30 @@ def profile_view(request):
     return render(request, 'scoreboard/profile.html')
 
 def details(request):
-    return render(request, 'scoreboard/details.html')
+    exLogID = request.GET.get('exLogID')
+    if exLogID:
+        exercise = get_object_or_404(ExLog, exLogID=exLogID)
+        exerciseInfo = get_object_or_404(ExInfo, exName=exercise.exName)
+        context = {
+            'exName': exercise.exName,
+            'exDateTime': exercise.exDateTime.strftime("%Y-%m-%d %H:%M:%S"),
+            'exScore': exercise.exScore,
+            'exCriteria1': exercise.exCriteria1,
+            'exCriteria2': exercise.exCriteria2,
+            'exCriteria3': exercise.exCriteria3,
+            'exCriteria4': exercise.exCriteria4,
+            'exCriteria5': exercise.exCriteria5,
+            'exCriteria6': exercise.exCriteria6,
+            'exCriteriaDesc1': exerciseInfo.exCriteriaDesc1,
+            'exCriteriaDesc2': exerciseInfo.exCriteriaDesc2,
+            'exCriteriaDesc3': exerciseInfo.exCriteriaDesc3,
+            'exCriteriaDesc4': exerciseInfo.exCriteriaDesc4,
+            'exCriteriaDesc5': exerciseInfo.exCriteriaDesc5,
+            'exCriteriaDesc6': exerciseInfo.exCriteriaDesc6,
+        }
+    else:
+        context = {}
+    return render(request, 'scoreboard/details.html', context)
 
 def signup(request):
     if request.method == 'POST':

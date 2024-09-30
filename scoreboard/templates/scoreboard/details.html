@@ -66,14 +66,14 @@
                     <h3 class="text-xl font-semibold mb-4">Phase 1: Discovery</h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span>i. Discover Vulnerable SMB Port</span>
+                            <span>{{ exCriteriaDesc1 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
                                 <input type="checkbox" class="checkbox" disabled id="criteria1">
                             </div>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span>ii. Enumerate SMB Shares</span>
+                            <span>{{ exCriteriaDesc2 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
                                 <input type="checkbox" class="checkbox" disabled id="criteria2">
@@ -86,14 +86,14 @@
                     <h3 class="text-xl font-semibold mb-4">Phase 2: Exploitation</h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span>i. Exploit EternalBlue Vulnerability</span>
+                            <span>{{ exCriteriaDesc3 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
                                 <input type="checkbox" class="checkbox" disabled id="criteria3">
                             </div>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span>ii. Gain Remote Code Execution</span>
+                            <span>{{ exCriteriaDesc4 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
                                 <input type="checkbox" class="checkbox" disabled id="criteria4">
@@ -106,14 +106,14 @@
                     <h3 class="text-xl font-semibold mb-4">Phase 3: Post-Exploitation</h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span>i. Establish Persistence</span>
+                            <span>{{ exCriteriaDesc5 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
                                 <input type="checkbox" class="checkbox" disabled id="criteria5">
                             </div>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span>ii. Data Exfiltration</span>
+                            <span>{{ exCriteriaDesc6 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
                                 <input type="checkbox" class="checkbox" disabled id="criteria6">
@@ -138,18 +138,17 @@
     </footer>
 
     <script>
-        // Parse URL parameters to get criteria values
-        const urlParams = new URLSearchParams(window.location.search);
-        const exerciseName = urlParams.get('exName');
-        const exerciseDate = urlParams.get('exDate');
-        const exerciseScore = urlParams.get('exScore');
+        // Remove the URL parameter parsing code and use the context data directly
+        const exerciseName = "{{ exName }}";
+        const exerciseDate = "{{ exDate }}";
+        const exerciseScore = "{{ exScore }}";
         const criteriaData = {
-            exCriteria1: urlParams.get('exCriteria1') === 'true',
-            exCriteria2: urlParams.get('exCriteria2') === 'true',
-            exCriteria3: urlParams.get('exCriteria3') === 'true',
-            exCriteria4: urlParams.get('exCriteria4') === 'true',
-            exCriteria5: urlParams.get('exCriteria5') === 'true',
-            exCriteria6: urlParams.get('exCriteria6') === 'true'
+            exCriteria1: {{ exCriteria1|yesno:"true,false" }},
+            exCriteria2: {{ exCriteria2|yesno:"true,false" }},
+            exCriteria3: {{ exCriteria3|yesno:"true,false" }},
+            exCriteria4: {{ exCriteria4|yesno:"true,false" }},
+            exCriteria5: {{ exCriteria5|yesno:"true,false" }},
+            exCriteria6: {{ exCriteria6|yesno:"true,false" }}
         };
 
         function debugLog(message) {
@@ -167,8 +166,8 @@
         }
 
         // Update the exercise name and date in the h2 element
-        document.getElementById('exercise-name').textContent = exerciseName;
-        document.getElementById('exercise-date').textContent = exerciseDate;
+        document.getElementById('exercise-name').textContent = "{{ exName }}";
+        document.getElementById('exercise-date').textContent = "{{ exDateTime }}";
 
         function setCheckboxStates(data) {
             let totalScore = 0;
