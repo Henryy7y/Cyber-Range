@@ -66,13 +66,13 @@
     <main class="container mx-auto mt-12 px-4">
         <section class="bg-cyber rounded-2xl shadow-2xl p-8 mb-12">
             <h2 id="exercise-name-container" class="text-3xl font-bold mb-6 text-cyber flex justify-between items-center">
-                <span id="exercise-name">{{ exercise.name }}</span>
-                <span id="exercise-date" class="text-sm text-gray-400">{{ exercise.date|date:"F d, Y H:i" }}</span>
+                <span id="exercise-name">{{ exName }}</span>
+                <span id="exercise-date" class="text-sm text-gray-400">{{ exDateTime }}</span>
             </h2>
 
             <div class="bg-gray-700 text-white p-4 rounded-lg mb-8">
-                <h3 class="text-xl font-semibold mb-2">Score: <span id="total-score" class="text-3xl font-bold">{{ exercise.score }}</span></h3>
-                <p>Student: {{ exercise.student.first_name }} {{ exercise.student.last_name }}</p>
+                <h3 class="text-xl font-semibold mb-2">Score: <span id="total-score" class="text-3xl font-bold">{{ exScore }}</span></h3>
+                <p>Student: {{ exPlayerName }}</p>
             </div>
 
             <div class="space-y-8">
@@ -80,17 +80,17 @@
                     <h3 class="text-xl font-semibold mb-4">Phase 1: Discovery</h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span>i. Discover Vulnerable SMB Port</span>
+                            <span>{{ exCriteriaDesc1 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
-                                <input type="checkbox" class="checkbox" disabled id="criteria1" {% if exercise.criteria1 %}checked{% endif %}>
+                                <input type="checkbox" class="checkbox" disabled id="criteria1" {% if exCriteria1 %}checked{% endif %}>
                             </div>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span>ii. Enumerate SMB Shares</span>
+                            <span>{{ exCriteriaDesc2 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
-                                <input type="checkbox" class="checkbox" disabled id="criteria2" {% if exercise.criteria2 %}checked{% endif %}>
+                                <input type="checkbox" class="checkbox" disabled id="criteria2" {% if exCriteria2 %}checked{% endif %}>
                             </div>
                         </div>
                     </div>
@@ -100,17 +100,17 @@
                     <h3 class="text-xl font-semibold mb-4">Phase 2: Exploitation</h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span>i. Exploit EternalBlue Vulnerability</span>
+                            <span>{{ exCriteriaDesc3 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
-                                <input type="checkbox" class="checkbox" disabled id="criteria3" {% if exercise.criteria3 %}checked{% endif %}>
+                                <input type="checkbox" class="checkbox" disabled id="criteria3" {% if exCriteria3 %}checked{% endif %}>
                             </div>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span>ii. Gain Remote Code Execution</span>
+                            <span>{{ exCriteriaDesc4 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
-                                <input type="checkbox" class="checkbox" disabled id="criteria4" {% if exercise.criteria4 %}checked{% endif %}>
+                                <input type="checkbox" class="checkbox" disabled id="criteria4" {% if exCriteria4 %}checked{% endif %}>
                             </div>
                         </div>
                     </div>
@@ -120,17 +120,17 @@
                     <h3 class="text-xl font-semibold mb-4">Phase 3: Post-Exploitation</h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center">
-                            <span>i. Establish Persistence</span>
+                            <span>{{ exCriteriaDesc5 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
-                                <input type="checkbox" class="checkbox" disabled id="criteria5" {% if exercise.criteria5 %}checked{% endif %}>
+                                <input type="checkbox" class="checkbox" disabled id="criteria5" {% if exCriteria5 %}checked{% endif %}>
                             </div>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span>ii. Data Exfiltration</span>
+                            <span>{{ exCriteriaDesc6 }}</span>
                             <div class="flex items-center">
                                 <span class="mr-2 font-semibold">+10</span>
-                                <input type="checkbox" class="checkbox" disabled id="criteria6" {% if exercise.criteria6 %}checked{% endif %}>
+                                <input type="checkbox" class="checkbox" disabled id="criteria6" {% if exCriteria6 %}checked{% endif %}>
                             </div>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
         <section class="bg-cyber rounded-2xl shadow-2xl p-8 mb-12">
             <h3 class="text-2xl font-bold mb-4 text-cyber">Instructor Notes</h3>
             <div class="bg-gray-700 p-4 rounded-lg">
-                <p>{{ exercise.instructor_notes|default:"No notes available." }}</p>
+                <p>Add instructor notes functionality here.</p>
             </div>
         </section>
     </main>
@@ -151,5 +151,24 @@
             <p>&copy; 2024 Cyber Range Exercise Module. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        function debugLog(message) {
+            console.log(message);
+        }
+
+        // Log the received data
+        debugLog('Received Parameters:');
+        debugLog(`exName: {{ exName }}`);
+        debugLog(`exDateTime: {{ exDateTime }}`);
+        debugLog(`exScore: {{ exScore }}`);
+        debugLog(`exPlayerName: {{ exPlayerName }}`);
+        debugLog(`exCriteria1: {{ exCriteria1 }}`);
+        debugLog(`exCriteria2: {{ exCriteria2 }}`);
+        debugLog(`exCriteria3: {{ exCriteria3 }}`);
+        debugLog(`exCriteria4: {{ exCriteria4 }}`);
+        debugLog(`exCriteria5: {{ exCriteria5 }}`);
+        debugLog(`exCriteria6: {{ exCriteria6 }}`);
+    </script>
 </body>
 </html>

@@ -35,30 +35,19 @@
             </div>
 
             <div class="space-y-6" id="exercise-list">
-                <!--Duplicate for more exercise type-->
-                <div class="border border-cyber rounded-xl p-6 hover-cyber hover:text-white transition duration-300 exercise-item" data-category="smb">
+                {% for exercise in exInfo %}
+                <div class="border border-cyber rounded-xl p-6 hover-cyber hover:text-white transition duration-300 exercise-item" data-category="{{ exercise.exType|lower }}">
                     <div class="flex justify-between items-center mb-4"> 
-                        <h3 class="text-xl font-semibold">SMB Exploitation Exercise</h3>
-                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">SMB</span>
+                        <h3 class="text-xl font-semibold">{{ exercise.exName }}</h3>
+                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">{{ exercise.exType }}</span>
                     </div>
-                    <p class="text-sm text-gray-600 mb-4">Practice exploiting vulnerabilities in SMB protocol.</p>
+                    <p class="text-sm text-gray-600 mb-4">Test Description.</p>
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500">Difficulty: Intermediate</span>
-                        <a href="{% url 'exercise_question' %}" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300">Start</a>
+                        <span class="text-sm text-gray-500">Difficulty: {{ exercise.exDifficulty }}*</span>
+                        <a href="{% url 'exercise_question' %}?exName={{ exercise.exName }}" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300">Start</a>
                     </div>
                 </div>
-                <!--Duplicate for more exercise type-->
-                <div class="border border-cyber rounded-xl p-6 hover-cyber hover:text-white transition duration-300 exercise-item" data-category="smb">
-                    <div class="flex justify-between items-center mb-4"> 
-                        <h3 class="text-xl font-semibold">BlueKeep Exploitation Exercise</h3>
-                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">SMB</span>
-                    </div>
-                    <p class="text-sm text-gray-600 mb-4">Practice exploiting vulnerabilities in SMB protocol.</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500">Difficulty: Intermediate</span>
-                        <a href="{% url 'exercise_question' %}" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300">Start</a>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </section>
     </main>

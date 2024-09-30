@@ -8,6 +8,10 @@ from .models import SMBExercise, ExLog, ExInfo  # Add this import
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth.models import User  # Add this import
+from django.db.models import Avg, Count
+from django.db.models import Q
+from django.db.models import Avg, Case, When 
+from django.db.models import IntegerField
 
 def scoreboard_home(request):
     return render(request, 'scoreboard/home.html')
@@ -112,14 +116,105 @@ def signup(request):
     return render(request, 'scoreboard/signup.html')
 
 def instructor_dashboard(request):
-    return render(request, 'scoreboard/instructor_dashboard.html')
+    # Get all exercise records
+    exercise_records = ExLog.objects.all().select_related('exName')
+
+    # Apply search filters if provided
+    student_search = request.GET.get('student_search', '')
+    exercise_search = request.GET.get('exercise_search', '')
+
+    if student_search:
+        exercise_records = exercise_records.filter(
+            Q(exPlayerName__icontains=student_search) |
+            Q(exPlayerName__in=User.objects.filter(
+                Q(first_name__icontains=student_search) |
+                Q(last_name__icontains=student_search)
+            ).values('username'))
+        )
+
+    if exercise_search:
+        exercise_records = exercise_records.filter(exName__exName__icontains=exercise_search)
+
+    # Calculate statistics
+    total_students = User.objects.count()
+    total_exercises = exercise_records.count()
+
+    def calculate_average_score(records):
+        total_score = 0
+        total_records = 0
+        for record in records:
+            criteria_sum = sum([
+                record.exCriteria1, record.exCriteria2, record.exCriteria3,
+                record.exCriteria4, record.exCriteria5, record.exCriteria6
+            ])
+            total_score += criteria_sum * (100 / 60)  # Convert to percentage
+            total_records += 1
+        return total_score / total_records if total_records > 0 else 0
+
+    average_score = calculate_average_score(exercise_records)
+
+    # Get top performing students
+    # top_students = User.objects.annotate(
+    #     average_score=Avg(
+    #         Case(
+    #             When(exlog__exCriteria1=True, then=10),
+    #             When(exlog__exCriteria2=True, then=10),
+    #             When(exlog__exCriteria3=True, then=10),
+    #             When(exlog__exCriteria4=True, then=10),
+    #             When(exlog__exCriteria5=True, then=10),
+    #             When(exlog__exCriteria6=True, then=10),
+    #             default=0,
+    #             output_field=IntegerField()
+    #         )
+    #     ),
+    #     exercises_completed=Count('exlog')
+    # ).order_by('-average_score')[:10]
+
+    context = {
+        'exercise_records': exercise_records,
+        'total_students': total_students,
+        'total_exercises': total_exercises,
+        'average_score': average_score,
+        # 'top_students': top_students,
+        'student_search': student_search,
+        'exercise_search': exercise_search,
+    }
+
+    return render(request, 'scoreboard/instructor_dashboard.html', context)
 
 def instructor_details(request):
-    return render(request, 'scoreboard/instructor_details.html')
+    exLogID = request.GET.get('exLogID')
+    if exLogID:
+        exercise = get_object_or_404(ExLog, exLogID=exLogID)
+        exerciseInfo = get_object_or_404(ExInfo, exName=exercise.exName.exName)
+        context = {
+            'exName': exercise.exName.exName,
+            'exDateTime': exercise.exDateTime,
+            'exScore': exercise.exScore,
+            'exPlayerName': exercise.exPlayerName,
+            'exCriteria1': exercise.exCriteria1,
+            'exCriteria2': exercise.exCriteria2,
+            'exCriteria3': exercise.exCriteria3,
+            'exCriteria4': exercise.exCriteria4,
+            'exCriteria5': exercise.exCriteria5,
+            'exCriteria6': exercise.exCriteria6,
+            'exCriteriaDesc1': exerciseInfo.exCriteriaDesc1,
+            'exCriteriaDesc2': exerciseInfo.exCriteriaDesc2,
+            'exCriteriaDesc3': exerciseInfo.exCriteriaDesc3,
+            'exCriteriaDesc4': exerciseInfo.exCriteriaDesc4,
+            'exCriteriaDesc5': exerciseInfo.exCriteriaDesc5,
+            'exCriteriaDesc6': exerciseInfo.exCriteriaDesc6,
+        }
+    else:
+        context = {}
+    return render(request, 'scoreboard/instructor_details.html', context)
 
 def exercise_list(request):
-    return render(request, 'scoreboard/exercise_list.html')
+    exInfo = ExInfo.objects.all()
+    context = {
+        'exInfo': exInfo,
+    }
+    return render(request, 'scoreboard/exercise_list.html', context)
 
 def exercise_question(request):
     return render(request, 'scoreboard/exercise_question.html')
-
