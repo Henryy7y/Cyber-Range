@@ -22,3 +22,33 @@ class SMBExercise(models.Model):
         criteria = [self.exCriteria1, self.exCriteria2, self.exCriteria3,
                     self.exCriteria4, self.exCriteria5, self.exCriteria6]
         return 10 * sum(criteria)
+
+class ExInfo(models.Model):
+    exName = models.CharField(max_length=255)
+    exCriteriaDesc1 = models.CharField(max_length=255)
+    exCriteriaDesc2 = models.CharField(max_length=255)
+    exCriteriaDesc3 = models.CharField(max_length=255)
+    exCriteriaDesc4 = models.CharField(max_length=255)
+    exCriteriaDesc5 = models.CharField(max_length=255)
+    exCriteriaDesc6 = models.CharField(max_length=255)
+    exDifficulty = models.IntegerField()
+    exType = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.exName
+    
+class ExLog(models.Model):
+    exPlayerName = models.CharField(max_length=20)
+    exCriteria1 = models.BooleanField(default=False)
+    exCriteria2 = models.BooleanField(default=False)
+    exCriteria3 = models.BooleanField(default=False)
+    exCriteria4 = models.BooleanField(default=False)
+    exCriteria5 = models.BooleanField(default=False)
+    exCriteria6 = models.BooleanField(default=False)
+    exDateTime = models.DateTimeField(default=timezone.now)
+    exName = models.ForeignKey(ExInfo, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.exPlayerName
+
+    
