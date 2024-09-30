@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Range Exercise Module</title>
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .bg-cyber {
+            background-color: #1a1a2e;
+        }
+        .text-cyber {
+            color: #0f3460;
+        }
+        .border-cyber {
+            border-color: #16213e;
+        }
+        .hover-cyber:hover {
+            background-color: #0f3460;
+        }
+    </style>
+</head>
+<body class="bg-cyber min-h-screen">
+    {% include 'scoreboard/header.html' %}
+
+    <main class="container mx-auto mt-12 px-4">
+        <section class="bg-white rounded-2xl shadow-2xl p-8 mb-12 transform">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-cyber">Your Exercise Scores</h2>
+                <button onclick="viewAvailableExercises()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                    View Available Exercises
+                </button>
+            </div>
+            <div class="space-y-8">
+                {% if exercises %}
+                    {% for exercise in exercises %}
+                    <div class="border border-cyber rounded-xl p-6 hover-cyber hover:text-white transition duration-300">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold cursor-pointer" onclick="redirectToDetails('{{ exercise.exName }}', '{{ exercise.exDate|date:"Y-m-d H:i:s" }}', '{{ exercise.exScore }}', '{{ exercise.exCriteria1|yesno:"true,false" }}', '{{ exercise.exCriteria2|yesno:"true,false" }}', '{{ exercise.exCriteria3|yesno:"true,false" }}', '{{ exercise.exCriteria4|yesno:"true,false" }}', '{{ exercise.exCriteria5|yesno:"true,false" }}', '{{ exercise.exCriteria6|yesno:"true,false" }}')">
+                                {{ exercise.exName }}
+                            </h3>
+                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">Completed</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Date: {{ exercise.exDate|date:"F d, Y H:i" }}</p>
+                        <div class="flex items-center">
+                            <div class="text-3xl font-bold mr-4">{% widthratio exercise.exScore 60 100 %}%</div>
+                            <div class="flex-grow">
+                                <div class="w-full bg-gray-200 rounded-full h-4">
+                                    <div class="bg-gradient-to-r from-blue-500 to-purple-500 h-4 rounded-full" style="width: {% widthratio exercise.exScore 60 100 %}%"></div>
+                                </div>
+                            </div>
+                            <div class="ml-4 text-lg font-semibold">{{ exercise.exScore }}/60</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center text-gray-600">No Records found for {{ user.username }}</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div class="bg-white rounded-2xl shadow-xl p-6 text-center transform hover:scale-105 transition duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 class="text-xl font-semibold mb-2">Performed Exercises</h3>
+                <p class="text-3xl font-bold text-blue-600">{{ exercises|length }}</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-xl p-6 text-center transform hover:scale-105 transition duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <h3 class="text-xl font-semibold mb-2">Total Score</h3>
+                <p class="text-3xl font-bold text-purple-600">
+                    {% with total_score=0 %}
+                        {% for exercise in exercises %}
+                            {% with total_score=total_score|add:exercise.exScore %}{% endwith %}
+                        {% endfor %}
+                        {{ total_score }}
+                    {% endwith %}
+                </p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-xl p-6 text-center transform hover:scale-105 transition duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <h3 class="text-xl font-semibold mb-2">Current Rank</h3>
+                <p class="text-3xl font-bold text-green-600">#3</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 Cyber Range Exercise Module. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function redirectToDetails(exName, exDate, exScore, exCriteria1, exCriteria2, exCriteria3, exCriteria4, exCriteria5, exCriteria6) {
+            const params = new URLSearchParams({
+                exName: exName,
+                exDate: exDate,
+                exScore: exScore,
+                exCriteria1: exCriteria1,
+                exCriteria2: exCriteria2,
+                exCriteria3: exCriteria3,
+                exCriteria4: exCriteria4,
+                exCriteria5: exCriteria5,
+                exCriteria6: exCriteria6
+            });
+            window.location.href = `{% url 'details' %}?${params.toString()}`;
+        }
+
+        function viewAvailableExercises() {
+            // Redirect to the page with available exercises
+            window.location.href = "{% url 'exercise_list' %}";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% load static %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<header>
+    <div class="header-left">
+        <a href="{% url 'dashboard' %}"><img src="{% static 'images/uni logo.png' %}" alt="University Logo" class="uni-logo"></a>
+        <h1>Cyber Range Exercise Module</h1>
+    </div>
+    <svg class="profile-photo" id="profile-photo" width="40" height="40" viewBox="0 0 40 40">
+        <circle cx="20" cy="20" r="19" fill="white" stroke="#3f51b5" stroke-width="2"/>
+        <text x="20" y="20" fill="black" font-size="20" text-anchor="middle" dominant-baseline="central">
+            {{ user.username|first|upper }}
+        </text>
+    </svg>
+    <div class="user-card" id="user-card">
+        <h3 style="color: black;">{{ user.get_full_name|default:user.username }}</h3>
+        <ul>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li style="display: none;"><a href="#settings">Settings</a></li>
+            <li><a href="{% url 'logout' %}">Log out</a></li>
+        </ul>
+    </div>
+</header>
+
+<script>
+    // User card toggle functionality
+    const profilePhoto = document.getElementById('profile-photo');
+    const userCard = document.getElementById('user-card');
+    let isUserCardVisible = false;
+
+    profilePhoto.addEventListener('click', () => {
+        event.stopPropagation();
+        isUserCardVisible = !isUserCardVisible;
+        userCard.style.display = isUserCardVisible ? 'block' : 'none';
+    });
+
+    // Close user card when clicking outside
+    document.addEventListener('click', (event) => {
+        if (!profilePhoto.contains(event.target) && !userCard.contains(event.target)) {
+            isUserCardVisible = false;
+            userCard.style.display = 'none';
+        }
+    });
+</script>

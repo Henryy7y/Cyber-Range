@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <style>
+        .content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .score-box {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .phase {
+            background-color: #d0d0d0;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .task {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            background-color: #e8e8e8;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .task-description {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .task-score {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            width: 80px;
+            flex-shrink: 0;
+        }
+        .checkbox {
+            margin-left: 5px;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 3px;
+            outline: none;
+            cursor: not-allowed;
+        }
+        .checkbox:checked {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+        .checkbox:not(:checked) {
+            background-color: #F44336;
+            border-color: #F44336;
+        }
+        .checkbox:checked::before {
+            content: '\2714';
+            display: block;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            line-height: 20px;
+        }
+        .score {
+            width: 30px;
+            text-align: right;
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .task {
+                flex-wrap: wrap;
+            }
+            .task-description {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .task-score {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-card {
+                top: 110px;
+                right: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'scoreboard/header.html' %}
+
+    <div class="content">
+        <h2 id="exercise-name-container">
+            <span id="exercise-name"></span>
+            <span id="exercise-date" style="float: right; font-size: 0.8em; color: #666;"></span>
+        </h2>
+
+        <div class="score-box">
+            <h3>Score: <span id="total-score">0</span></h3>
+        </div>
+
+        <div class="phase">
+            <h3>Phase 1: Discovery</h3>
+            <div class="task">
+                <span class="task-description">i. Discover Vulnerable SMB Port</span>
+                <div class="task-score">
+                    <span class="score">+10</span>
+                    <input type="checkbox" class="checkbox" disabled id="criteria1">
+                </div>
+            </div>
+            <div class="task">
+                <span class="task-description">ii. Enumerate SMB Shares</span>
+                <div class="task-score">
+                    <span class="score">+10</span>
+                    <input type="checkbox" class="checkbox" disabled id="criteria2">
+                </div>
+            </div>
+        </div>
+
+        <div class="phase">
+            <h3>Phase 2: Exploitation</h3>
+            <div class="task">
+                <span class="task-description">i. Exploit EternalBlue Vulnerability</span>
+                <div class="task-score">
+                    <span class="score">+10</span>
+                    <input type="checkbox" class="checkbox" disabled id="criteria3">
+                </div>
+            </div>
+            <div class="task">
+                <span class="task-description">ii. Gain Remote Code Execution</span>
+                <div class="task-score">
+                    <span class="score">+10</span>
+                    <input type="checkbox" class="checkbox" disabled id="criteria4">
+                </div>
+            </div>
+        </div>
+
+        <div class="phase">
+            <h3>Phase 3: Post-Exploitation</h3>
+            <div class="task">
+                <span class="task-description">i. Establish Persistence</span>
+                <div class="task-score">
+                    <span class="score">+10</span>
+                    <input type="checkbox" class="checkbox" disabled id="criteria5">
+                </div>
+            </div>
+            <div class="task">
+                <span class="task-description">ii. Data Exfiltration</span>
+                <div class="task-score">
+                    <span class="score">+10</span>
+                    <input type="checkbox" class="checkbox" disabled id="criteria6">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this new debug section -->
+    <div id="debug-log" style="margin-top: 20px; padding: 10px; background-color: #f0f0f0; border: 1px solid #ccc;">
+        <h3>Debug Log:</h3>
+        <pre id="debug-content"></pre>
+    </div>
+
+    {% include 'scoreboard/profile_card_script.html' %}
+    <script>
+        // Parse URL parameters to get criteria values
+        const urlParams = new URLSearchParams(window.location.search);
+        const exerciseName = urlParams.get('exName');
+        const exerciseDate = urlParams.get('exDate');
+        const exerciseScore = urlParams.get('exScore');
+        const criteriaData = {
+            exCriteria1: urlParams.get('exCriteria1') === 'true',
+            exCriteria2: urlParams.get('exCriteria2') === 'true',
+            exCriteria3: urlParams.get('exCriteria3') === 'true',
+            exCriteria4: urlParams.get('exCriteria4') === 'true',
+            exCriteria5: urlParams.get('exCriteria5') === 'true',
+            exCriteria6: urlParams.get('exCriteria6') === 'true'
+        };
+
+        function debugLog(message) {
+            const debugContent = document.getElementById('debug-content');
+            debugContent.textContent += message + '\n';
+        }
+
+        // Log the received data in key-value pair format
+        debugLog('Received Parameters:');
+        debugLog(`exName: ${exerciseName}`);
+        debugLog(`exDate: ${exerciseDate}`);
+        debugLog(`exScore: ${exerciseScore}`);
+        for (const [key, value] of Object.entries(criteriaData)) {
+            debugLog(`${key}: ${value}`);
+        }
+
+        // Update the exercise name and date in the h2 element
+        document.getElementById('exercise-name').textContent = exerciseName;
+        document.getElementById('exercise-date').textContent = exerciseDate;
+
+        function setCheckboxStates(data) {
+            let totalScore = 0;
+
+            for (let i = 1; i <= 6; i++) {
+                const criteriaId = `criteria${i}`;
+                const isChecked = data[`exCriteria${i}`];
+                const checkbox = document.getElementById(criteriaId);
+                
+                if (checkbox) {
+                    const scoreSpan = checkbox.parentElement.querySelector('.score');
+                    
+                    checkbox.checked = isChecked;
+                    if (isChecked) {
+                        totalScore += 10;
+                        scoreSpan.textContent = "+10";
+                    } else {
+                        scoreSpan.textContent = "+0";
+                    }
+                } else {
+                    debugLog(`Checkbox with id ${criteriaId} not found`);
+                }
+            }
+
+            // Update the total score display
+            document.getElementById('total-score').textContent = totalScore;
+        }
+
+        // Call the function with the criteria data
+        setCheckboxStates(criteriaData);
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMB Exploitation Exercise - Cyber Range</title>
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .bg-cyber {
+            background-color: #1a1a2e;
+        }
+        .text-cyber {
+            color: #0f3460;
+        }
+        .border-cyber {
+            border-color: #16213e;
+        }
+        .hover-cyber:hover {
+            background-color: #0f3460;
+        }
+    </style>
+</head>
+<body class="bg-cyber min-h-screen">
+    {% include 'scoreboard/header.html' %}
+
+    <main class="container mx-auto mt-12 px-4">
+        <section class="bg-white rounded-2xl shadow-2xl p-8 mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-cyber">SMB Exploitation Exercise</h2>
+
+            <form id="exercise-form" class="space-y-8">
+                <div class="border border-cyber rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4">Phase 1: Reconnaissance</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-2 font-medium">1. What port is typically associated with SMB?</label>
+                            <input type="text" name="recon_q1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-medium">2. Which tool can be used to enumerate SMB shares?</label>
+                            <input type="text" name="recon_q2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-cyber rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4">Phase 2: Exploitation</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-2 font-medium">1. What is the name of the vulnerability often exploited in SMB?</label>
+                            <input type="text" name="exploit_q1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-medium">2. Which Metasploit module can be used to exploit SMB vulnerabilities?</label>
+                            <input type="text" name="exploit_q2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-cyber rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4">Phase 3: Post-Exploitation</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-2 font-medium">1. What command can be used to view system information after gaining access?</label>
+                            <input type="text" name="post_exploit_q1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block mb-2 font-medium">2. How can you establish persistence on the compromised system?</label>
+                            <textarea name="post_exploit_q2" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition duration-300">Submit Answers</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 Cyber Range Exercise Module. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('exercise-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Here you would typically send the form data to a server for processing
+            console.log('Form submitted');
+            // For demonstration purposes, we'll just log the form data
+            const formData = new FormData(this);
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+            alert('Answers submitted successfully!');
+        });
+    </script>
+</body>
+</html>

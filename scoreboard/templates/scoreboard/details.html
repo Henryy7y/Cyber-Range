@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Details - Cyber Range</title>
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .bg-cyber {
+            background-color: #1a1a2e;
+        }
+        .text-cyber {
+            color: #0f3460;
+        }
+        .border-cyber {
+            border-color: #16213e;
+        }
+        .hover-cyber:hover {
+            background-color: #0f3460;
+        }
+        .checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 3px;
+            outline: none;
+            cursor: not-allowed;
+        }
+        .checkbox:checked {
+            background-color: #10B981;
+            border-color: #10B981;
+        }
+        .checkbox:not(:checked) {
+            background-color: #EF4444;
+            border-color: #EF4444;
+        }
+        .checkbox:checked::before {
+            content: '\2714';
+            display: block;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            line-height: 20px;
+        }
+    </style>
+</head>
+<body class="bg-cyber min-h-screen">
+    {% include 'scoreboard/header.html' %}
+
+    <main class="container mx-auto mt-12 px-4">
+        <section class="bg-white rounded-2xl shadow-2xl p-8 mb-12">
+            <h2 id="exercise-name-container" class="text-3xl font-bold mb-6 text-cyber">
+                <span id="exercise-name"></span>
+                <span id="exercise-date" class="text-sm text-gray-500 float-right"></span>
+            </h2>
+
+            <div class="bg-blue-100 text-blue-800 p-4 rounded-lg mb-8">
+                <h3 class="text-xl font-semibold mb-2">Score: <span id="total-score" class="text-3xl font-bold">0</span></h3>
+            </div>
+
+            <div class="space-y-8">
+                <div class="border border-cyber rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4">Phase 1: Discovery</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>i. Discover Vulnerable SMB Port</span>
+                            <div class="flex items-center">
+                                <span class="mr-2 font-semibold">+10</span>
+                                <input type="checkbox" class="checkbox" disabled id="criteria1">
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>ii. Enumerate SMB Shares</span>
+                            <div class="flex items-center">
+                                <span class="mr-2 font-semibold">+10</span>
+                                <input type="checkbox" class="checkbox" disabled id="criteria2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-cyber rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4">Phase 2: Exploitation</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>i. Exploit EternalBlue Vulnerability</span>
+                            <div class="flex items-center">
+                                <span class="mr-2 font-semibold">+10</span>
+                                <input type="checkbox" class="checkbox" disabled id="criteria3">
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>ii. Gain Remote Code Execution</span>
+                            <div class="flex items-center">
+                                <span class="mr-2 font-semibold">+10</span>
+                                <input type="checkbox" class="checkbox" disabled id="criteria4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-cyber rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4">Phase 3: Post-Exploitation</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>i. Establish Persistence</span>
+                            <div class="flex items-center">
+                                <span class="mr-2 font-semibold">+10</span>
+                                <input type="checkbox" class="checkbox" disabled id="criteria5">
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>ii. Data Exfiltration</span>
+                            <div class="flex items-center">
+                                <span class="mr-2 font-semibold">+10</span>
+                                <input type="checkbox" class="checkbox" disabled id="criteria6">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Debug Log Section (display property remove to show) -->
+        <section id="debug-log" class="bg-white rounded-2xl shadow-2xl p-8 mb-12" style="display: none;">
+            <h3 class="text-xl font-semibold mb-4">Debug Log:</h3>
+            <pre id="debug-content" class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto"></pre>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 Cyber Range Exercise Module. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Parse URL parameters to get criteria values
+        const urlParams = new URLSearchParams(window.location.search);
+        const exerciseName = urlParams.get('exName');
+        const exerciseDate = urlParams.get('exDate');
+        const exerciseScore = urlParams.get('exScore');
+        const criteriaData = {
+            exCriteria1: urlParams.get('exCriteria1') === 'true',
+            exCriteria2: urlParams.get('exCriteria2') === 'true',
+            exCriteria3: urlParams.get('exCriteria3') === 'true',
+            exCriteria4: urlParams.get('exCriteria4') === 'true',
+            exCriteria5: urlParams.get('exCriteria5') === 'true',
+            exCriteria6: urlParams.get('exCriteria6') === 'true'
+        };
+
+        function debugLog(message) {
+            const debugContent = document.getElementById('debug-content');
+            debugContent.textContent += message + '\n';
+        }
+
+        // Log the received data in key-value pair format
+        debugLog('Received Parameters:');
+        debugLog(`exName: ${exerciseName}`);
+        debugLog(`exDate: ${exerciseDate}`);
+        debugLog(`exScore: ${exerciseScore}`);
+        for (const [key, value] of Object.entries(criteriaData)) {
+            debugLog(`${key}: ${value}`);
+        }
+
+        // Update the exercise name and date in the h2 element
+        document.getElementById('exercise-name').textContent = exerciseName;
+        document.getElementById('exercise-date').textContent = exerciseDate;
+
+        function setCheckboxStates(data) {
+            let totalScore = 0;
+
+            for (let i = 1; i <= 6; i++) {
+                const criteriaId = `criteria${i}`;
+                const isChecked = data[`exCriteria${i}`];
+                const checkbox = document.getElementById(criteriaId);
+                
+                if (checkbox) {
+                    checkbox.checked = isChecked;
+                    if (isChecked) {
+                        totalScore += 10;
+                    }
+                } else {
+                    debugLog(`Checkbox with id ${criteriaId} not found`);
+                }
+            }
+
+            // Update the total score display
+            document.getElementById('total-score').textContent = totalScore;
+        }
+
+        // Call the function with the criteria data
+        setCheckboxStates(criteriaData);
+    </script>
+</body>
+</html>

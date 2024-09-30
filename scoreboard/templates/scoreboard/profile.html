@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Cyber Range</title>
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .bg-cyber {
+            background-color: #1a1a2e;
+        }
+        .text-cyber {
+            color: #0f3460;
+        }
+        .border-cyber {
+            border-color: #16213e;
+        }
+        .hover-cyber:hover {
+            background-color: #0f3460;
+        }
+    </style>
+</head>
+<body class="bg-cyber min-h-screen">
+    {% include 'scoreboard/header.html' %}
+
+    <main class="container mx-auto mt-12 px-4">
+        <section class="bg-white rounded-2xl shadow-2xl p-8 mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-cyber">User Profile</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <p class="mb-2"><span class="font-semibold">Username:</span> {{ user.username }}</p>
+                    <p class="mb-2" style="display: none;"><span class="font-semibold">Email:</span> {{ user.email }}</p>
+                    <p class="mb-2"><span class="font-semibold">First Name:</span> {{ user.first_name }}</p>
+                    <p class="mb-2"><span class="font-semibold">Last Name:</span> {{ user.last_name }}</p>
+                    <p class="mb-2"><span class="font-semibold">Date Joined:</span> {{ user.date_joined }}</p>
+                </div>
+                <div>
+                    <p class="mb-2"><span class="font-semibold">Last Login:</span> {{ user.last_login }}</p>
+                    <p class="mb-2"><span class="font-semibold">Is Active:</span> {{ user.is_active }}</p>
+                    <p class="mb-2"><span class="font-semibold">Instructor Status:</span> {{ user.is_staff }}</p>
+                    <p class="mb-2"  style="display: none;"><span class="font-semibold">Is Superuser:</span> {{ user.is_superuser }}</p>
+                    {% if user.groups.all %}
+                        <p class="mb-2">
+                            <span class="font-semibold">Groups:</span> 
+                            {% for group in user.groups.all %}
+                                {{ group.name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% if user.user_permissions.all %}
+                <div class="mt-6">
+                    <p class="font-semibold mb-2">User Permissions:</p>
+                    <ul class="list-disc list-inside">
+                        {% for perm in user.user_permissions.all %}
+                            <li>{{ perm.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <a href="{% url 'dashboard' %}" class="inline-block mt-8 bg-blue-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-blue-700 transition duration-300">Back to Scores</a>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 Cyber Range Exercise Module. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

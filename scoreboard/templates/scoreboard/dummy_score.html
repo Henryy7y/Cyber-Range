@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Exercise Scores</title>
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .page-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .score-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .score-card h2 {
+            font-size: 18px;
+            margin: 0 0 8px 0;
+            cursor: pointer;
+        }
+        .score-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .score-fill {
+            height: 100%;
+            background-color: #000;
+        }
+        .score-text {
+            margin-bottom: 8px;
+        }
+        .score-arrow {
+            float: right;
+            color: #757575;
+            text-decoration: none;
+        }
+        .clickable {
+            cursor: pointer;
+        }
+        .exercise-date {
+            font-size: 14px;
+            color: #666;
+            margin: 0 0 8px 0;
+        }
+        .no-records-message {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'scoreboard/header.html' %}
+
+    <div class="container">
+        <h2 class="page-title">Your Exercise Scores</h2>
+        
+        {% if exercises %}
+            {% for exercise in exercises %}
+            <div class="score-card">
+                <h2 class="clickable" onclick="redirectToDetails('{{ exercise.exName }}', '{{ exercise.exDate|date:"Y-m-d H:i:s" }}', '{{ exercise.exScore }}', '{{ exercise.exCriteria1|yesno:"true,false" }}', '{{ exercise.exCriteria2|yesno:"true,false" }}', '{{ exercise.exCriteria3|yesno:"true,false" }}', '{{ exercise.exCriteria4|yesno:"true,false" }}', '{{ exercise.exCriteria5|yesno:"true,false" }}', '{{ exercise.exCriteria6|yesno:"true,false" }}')">{{ exercise.exName }}</h2>
+                <p class="exercise-date">Date: {{ exercise.exDate|date:"F d, Y H:i" }}</p>
+                <div class="score-text">
+                    Score: {{ exercise.exScore }}/60
+                    <span class="score-arrow clickable" onclick="redirectToDetails('{{ exercise.exName }}', '{{ exercise.exDate|date:"Y-m-d H:i:s" }}', '{{ exercise.exScore }}', '{{ exercise.exCriteria1|yesno:"true,false" }}', '{{ exercise.exCriteria2|yesno:"true,false" }}', '{{ exercise.exCriteria3|yesno:"true,false" }}', '{{ exercise.exCriteria4|yesno:"true,false" }}', '{{ exercise.exCriteria5|yesno:"true,false" }}', '{{ exercise.exCriteria6|yesno:"true,false" }}')">></span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill" style="width: {% widthratio exercise.exScore 60 100 %}%;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-records-message">No Records found for {{ user.username }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Add this new section to show SMBExercise model values -->
+    <div style="margin-top: 20px; padding: 10px; background-color: #e0e0e0; border: 1px solid #ccc;">
+        <h3>SMBExercise Model Values:</h3>
+        {% for exercise in exercises %}
+        <p>
+            exName: {{ exercise.exName }}<br>
+            exDate: {{ exercise.exDate|date:"F d, Y H:i" }}<br>
+            exScore: {{ exercise.exScore }}<br>
+            exCriteria1: {{ exercise.exCriteria1|yesno:"true,false" }}<br>
+            exCriteria2: {{ exercise.exCriteria2|yesno:"true,false" }}<br>
+            exCriteria3: {{ exercise.exCriteria3|yesno:"true,false" }}<br>
+            exCriteria4: {{ exercise.exCriteria4|yesno:"true,false" }}<br>
+            exCriteria5: {{ exercise.exCriteria5|yesno:"true,false" }}<br>
+            exCriteria6: {{ exercise.exCriteria6|yesno:"true,false" }}<br>
+            ---
+        </p>
+        {% endfor %}
+    </div>
+
+    {% include 'scoreboard/profile_card_script.html' %}
+    <script>
+        function redirectToDetails(exName, exDate, exScore, exCriteria1, exCriteria2, exCriteria3, exCriteria4, exCriteria5, exCriteria6) {
+            const params = new URLSearchParams({
+                exName: exName,
+                exDate: exDate,
+                exScore: exScore,
+                exCriteria1: exCriteria1,
+                exCriteria2: exCriteria2,
+                exCriteria3: exCriteria3,
+                exCriteria4: exCriteria4,
+                exCriteria5: exCriteria5,
+                exCriteria6: exCriteria6
+            });
+
+            window.location.href = `{% url 'redirect2' %}?${params.toString()}`;
+        }
+    </script>
+</body>
+</html>

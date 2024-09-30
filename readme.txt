@@ -1,0 +1,1 @@
+pipenv shell - to enter the isolated environment
