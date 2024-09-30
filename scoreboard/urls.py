@@ -16,5 +16,4 @@ urlpatterns = [
     path('instructor-details/', views.instructor_details, name='instructor_details'),
     path('exercise-list/', views.exercise_list, name='exercise_list'),
     path('exercise-question/', views.exercise_question, name='exercise_question'),
-    path('instructor-dashboard/add-exercise/', views.add_exercise, name='add_exercise'),
 ]
