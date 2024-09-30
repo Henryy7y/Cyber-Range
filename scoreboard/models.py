@@ -38,6 +38,7 @@ class ExInfo(models.Model):
         return self.exName
     
 class ExLog(models.Model):
+    exLogID = models.AutoField(primary_key=True)
     exPlayerName = models.CharField(max_length=20)
     exCriteria1 = models.BooleanField(default=False)
     exCriteria2 = models.BooleanField(default=False)
