@@ -175,6 +175,29 @@
             border-radius: 4px;
             padding: 0.5rem;
         }
+        .instructor-login-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .instructor-btn {
+            background-color: #374151;
+            color: #ffffff;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .instructor-btn:hover {
+            background-color: #4B5563;
+            transform: none;
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -184,6 +207,9 @@
         <div class="shape"></div>
     </div>
     <div class="login-container">
+        <div class="instructor-login-container">
+            <a href="#" class="instructor-btn">Instructor Login</a>
+        </div>
         <img src="{% static 'images/uni logo.png' %}" alt="University Logo" class="logo">
         <h1>TAR UMT Cyber Range</h1>
         <form method="post">
