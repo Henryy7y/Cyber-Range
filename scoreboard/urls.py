@@ -12,8 +12,10 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('details/', views.details, name='details'),
     path('signup/', views.signup, name='signup'), 
+    path('instructor-login/', views.instructor_login, name='instructor_login'),
     path('instructor-dashboard/', views.instructor_dashboard, name='instructor_dashboard'),
     path('instructor-details/', views.instructor_details, name='instructor_details'),
     path('exercise-list/', views.exercise_list, name='exercise_list'),
     path('exercise-question/', views.exercise_question, name='exercise_question'),
+    path('instructor/logout/', views.instructor_logout, name='instructor_logout'),
 ]

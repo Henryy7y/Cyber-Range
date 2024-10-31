@@ -4,10 +4,10 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-from .models import SMBExercise, ExLog, ExInfo  # Add this import
+from .models import SMBExercise, ExLog, ExInfo 
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from django.contrib.auth.models import User  # Add this import
+from django.contrib.auth.models import User  
 from django.db.models import Avg, Count
 from django.db.models import Q
 from django.db.models import Avg, Case, When 
@@ -38,6 +38,21 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'scoreboard/login2.html')
+
+def instructor_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None and (user.is_staff or user.is_superuser):
+            auth_login(request, user)
+            return redirect('instructor_dashboard')
+        else:
+            messages.error(request, 'Invalid credentials or insufficient permissions. This login is for instructors only.')
+            return redirect('instructor_login')
+    
+    return render(request, 'scoreboard/instructor_login.html')
 
 def redirect_view(request):
     exercise_name = request.GET.get('exercise', '')
@@ -218,3 +233,7 @@ def exercise_list(request):
 
 def exercise_question(request):
     return render(request, 'scoreboard/exercise_question.html')
+
+def instructor_logout(request):
+    logout(request)
+    return redirect('instructor_login')
