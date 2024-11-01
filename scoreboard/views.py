@@ -85,27 +85,33 @@ def profile(request):
 def profile_view(request):
     return render(request, 'scoreboard/profile.html')
 
-def details(request, exercise_id):
-    exercise_log = ExLog.objects.select_related('exName').get(exLogID=exercise_id)
-    context = {
-        'exName': exercise_log.exName.exName,
-        'exDateTime': exercise_log.exDateTime,
-        'exScore': exercise_log.exScore,
-        'exCriteria1': exercise_log.exCriteria1,
-        'exCriteria2': exercise_log.exCriteria2,
-        'exCriteria3': exercise_log.exCriteria3,
-        'exCriteria4': exercise_log.exCriteria4,
-        'exCriteria5': exercise_log.exCriteria5,
-        'exCriteria6': exercise_log.exCriteria6,
-        'exCriteriaDesc1': exercise_log.exName.exCriteriaDesc1,
-        'exCriteriaDesc2': exercise_log.exName.exCriteriaDesc2,
-        'exCriteriaDesc3': exercise_log.exName.exCriteriaDesc3,
-        'exCriteriaDesc4': exercise_log.exName.exCriteriaDesc4,
-        'exCriteriaDesc5': exercise_log.exName.exCriteriaDesc5,
-        'exCriteriaDesc6': exercise_log.exName.exCriteriaDesc6,
-        'exComment': exercise_log.exComment,
-    }
-    return render(request, 'scoreboard/details.html', context)
+@login_required
+def details(request):
+    exLogID = request.GET.get('exLogID')
+    if exLogID:
+        exercise_log = get_object_or_404(ExLog.objects.select_related('exName'), exLogID=exLogID)
+        context = {
+            'exName': exercise_log.exName.exName,
+            'exDateTime': exercise_log.exDateTime,
+            'exScore': exercise_log.exScore,
+            'exCriteria1': exercise_log.exCriteria1,
+            'exCriteria2': exercise_log.exCriteria2,
+            'exCriteria3': exercise_log.exCriteria3,
+            'exCriteria4': exercise_log.exCriteria4,
+            'exCriteria5': exercise_log.exCriteria5,
+            'exCriteria6': exercise_log.exCriteria6,
+            'exCriteriaDesc1': exercise_log.exName.exCriteriaDesc1,
+            'exCriteriaDesc2': exercise_log.exName.exCriteriaDesc2,
+            'exCriteriaDesc3': exercise_log.exName.exCriteriaDesc3,
+            'exCriteriaDesc4': exercise_log.exName.exCriteriaDesc4,
+            'exCriteriaDesc5': exercise_log.exName.exCriteriaDesc5,
+            'exCriteriaDesc6': exercise_log.exName.exCriteriaDesc6,
+            'exComment': exercise_log.exComment,
+        }
+        return render(request, 'scoreboard/details.html', context)
+    else:
+        messages.error(request, 'No exercise ID provided')
+        return redirect('dashboard')
 
 def signup(request):
     if request.method == 'POST':
