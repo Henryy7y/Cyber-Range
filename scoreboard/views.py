@@ -249,7 +249,7 @@ def update_comment(request, log_id):
             exercise_log = ExLog.objects.get(exLogID=log_id)
             exercise_log.exComment = request.POST.get('instructor_comment', '')
             exercise_log.save()
-            messages.success(request, 'Comment updated successfully')
+            messages.success(request, 'Comment updated successfully', extra_tags='comment_update')
             return JsonResponse({'status': 'success', 'message': 'Comment updated successfully'})
         except ExLog.DoesNotExist:
             messages.error(request, 'Exercise log not found')

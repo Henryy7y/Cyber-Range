@@ -68,7 +68,8 @@
     {% if messages %}
     <div class="container mx-auto mt-4">
         {% for message in messages %}
-        <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-green-600{% else %}bg-red-600{% endif %} text-white">
+        <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-green-600{% else %}bg-red-600{% endif %} text-white" 
+             {% if message.extra_tags %}data-source="{{ message.extra_tags }}"{% endif %}>
             {{ message }}
         </div>
         {% endfor %}
@@ -249,6 +250,15 @@
                     }, 3000);
                 });
             }, 100);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('[data-source]');
+            messages.forEach(message => {
+                if (message.dataset.source !== 'comment_update') {
+                    message.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

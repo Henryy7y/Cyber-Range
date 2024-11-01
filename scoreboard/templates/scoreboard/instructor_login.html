@@ -65,7 +65,9 @@
             </form>
             {% if messages %}
                 {% for message in messages %}
-                    <p class="error">{{ message }}</p>
+                    <p class="{% if message.tags == 'success' %}bg-green-600{% else %}error{% endif %} mt-4 p-2 rounded">
+                        {{ message }}
+                    </p>
                 {% endfor %}
             {% endif %}
             <div class="mt-4 text-center">
