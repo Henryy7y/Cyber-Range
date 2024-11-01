@@ -61,6 +61,11 @@
                 <h3 class="text-xl font-semibold mb-2">Score: <span id="total-score" class="text-3xl font-bold">0</span></h3>
             </div>
 
+            <div class="bg-gray-100 p-4 rounded-lg mb-8">
+                <h3 class="text-xl font-semibold mb-2">Instructor Comment:</h3>
+                <p id="exercise-comment" class="text-gray-700">{{ exComment }}</p>
+            </div>
+
             <div class="space-y-8">
                 <div class="border border-cyber rounded-xl p-6">
                     <h3 class="text-xl font-semibold mb-4">Phase 1: Discovery</h3>
@@ -142,6 +147,7 @@
         const exerciseName = "{{ exName }}";
         const exerciseDate = "{{ exDate }}";
         const exerciseScore = "{{ exScore }}";
+        const exerciseComment = "{{ exComment }}";
         const criteriaData = {
             exCriteria1: {{ exCriteria1|yesno:"true,false" }},
             exCriteria2: {{ exCriteria2|yesno:"true,false" }},
@@ -161,6 +167,7 @@
         debugLog(`exName: ${exerciseName}`);
         debugLog(`exDate: ${exerciseDate}`);
         debugLog(`exScore: ${exerciseScore}`);
+        debugLog(`exComment: ${exerciseComment}`);
         for (const [key, value] of Object.entries(criteriaData)) {
             debugLog(`${key}: ${value}`);
         }

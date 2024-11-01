@@ -12,6 +12,7 @@ from django.db.models import Avg, Count
 from django.db.models import Q
 from django.db.models import Avg, Case, When 
 from django.db.models import IntegerField
+from django.http import JsonResponse
 
 def scoreboard_home(request):
     return render(request, 'scoreboard/home.html')
@@ -84,30 +85,26 @@ def profile(request):
 def profile_view(request):
     return render(request, 'scoreboard/profile.html')
 
-def details(request):
-    exLogID = request.GET.get('exLogID')
-    if exLogID:
-        exercise = get_object_or_404(ExLog, exLogID=exLogID)
-        exerciseInfo = get_object_or_404(ExInfo, exName=exercise.exName)
-        context = {
-            'exName': exercise.exName,
-            'exDateTime': exercise.exDateTime.strftime("%Y-%m-%d %H:%M:%S"),
-            'exScore': exercise.exScore,
-            'exCriteria1': exercise.exCriteria1,
-            'exCriteria2': exercise.exCriteria2,
-            'exCriteria3': exercise.exCriteria3,
-            'exCriteria4': exercise.exCriteria4,
-            'exCriteria5': exercise.exCriteria5,
-            'exCriteria6': exercise.exCriteria6,
-            'exCriteriaDesc1': exerciseInfo.exCriteriaDesc1,
-            'exCriteriaDesc2': exerciseInfo.exCriteriaDesc2,
-            'exCriteriaDesc3': exerciseInfo.exCriteriaDesc3,
-            'exCriteriaDesc4': exerciseInfo.exCriteriaDesc4,
-            'exCriteriaDesc5': exerciseInfo.exCriteriaDesc5,
-            'exCriteriaDesc6': exerciseInfo.exCriteriaDesc6,
-        }
-    else:
-        context = {}
+def details(request, exercise_id):
+    exercise_log = ExLog.objects.select_related('exName').get(exLogID=exercise_id)
+    context = {
+        'exName': exercise_log.exName.exName,
+        'exDateTime': exercise_log.exDateTime,
+        'exScore': exercise_log.exScore,
+        'exCriteria1': exercise_log.exCriteria1,
+        'exCriteria2': exercise_log.exCriteria2,
+        'exCriteria3': exercise_log.exCriteria3,
+        'exCriteria4': exercise_log.exCriteria4,
+        'exCriteria5': exercise_log.exCriteria5,
+        'exCriteria6': exercise_log.exCriteria6,
+        'exCriteriaDesc1': exercise_log.exName.exCriteriaDesc1,
+        'exCriteriaDesc2': exercise_log.exName.exCriteriaDesc2,
+        'exCriteriaDesc3': exercise_log.exName.exCriteriaDesc3,
+        'exCriteriaDesc4': exercise_log.exName.exCriteriaDesc4,
+        'exCriteriaDesc5': exercise_log.exName.exCriteriaDesc5,
+        'exCriteriaDesc6': exercise_log.exName.exCriteriaDesc6,
+        'exComment': exercise_log.exComment,
+    }
     return render(request, 'scoreboard/details.html', context)
 
 def signup(request):
@@ -203,6 +200,7 @@ def instructor_details(request):
         exercise = get_object_or_404(ExLog, exLogID=exLogID)
         exerciseInfo = get_object_or_404(ExInfo, exName=exercise.exName.exName)
         context = {
+            'exLogID': exLogID,
             'exName': exercise.exName.exName,
             'exDateTime': exercise.exDateTime,
             'exScore': exercise.exScore,
@@ -219,6 +217,7 @@ def instructor_details(request):
             'exCriteriaDesc4': exerciseInfo.exCriteriaDesc4,
             'exCriteriaDesc5': exerciseInfo.exCriteriaDesc5,
             'exCriteriaDesc6': exerciseInfo.exCriteriaDesc6,
+            'exComment': exercise.exComment if hasattr(exercise, 'exComment') else '',
         }
     else:
         context = {}
@@ -237,3 +236,20 @@ def exercise_question(request):
 def instructor_logout(request):
     logout(request)
     return redirect('instructor_login')
+
+def update_comment(request, log_id):
+    if request.method == 'POST':
+        try:
+            exercise_log = ExLog.objects.get(exLogID=log_id)
+            exercise_log.exComment = request.POST.get('instructor_comment', '')
+            exercise_log.save()
+            messages.success(request, 'Comment updated successfully')
+            return JsonResponse({'status': 'success', 'message': 'Comment updated successfully'})
+        except ExLog.DoesNotExist:
+            messages.error(request, 'Exercise log not found')
+            return JsonResponse({'status': 'error', 'message': 'Exercise log not found'})
+        except Exception as e:
+            messages.error(request, f'Error updating comment: {str(e)}')
+            return JsonResponse({'status': 'error', 'message': f'Error updating comment: {str(e)}'})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)

@@ -18,4 +18,5 @@ urlpatterns = [
     path('exercise-list/', views.exercise_list, name='exercise_list'),
     path('exercise-question/', views.exercise_question, name='exercise_question'),
     path('instructor/logout/', views.instructor_logout, name='instructor_logout'),
+    path('update-comment/<int:log_id>/', views.update_comment, name='update_comment'),
 ]

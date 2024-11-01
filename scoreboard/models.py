@@ -13,6 +13,7 @@ class SMBExercise(models.Model):
     exCriteria4 = models.BooleanField(default=False)
     exCriteria5 = models.BooleanField(default=False)
     exCriteria6 = models.BooleanField(default=False)
+    exComment = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.exName
