@@ -47,6 +47,7 @@ class ExLog(models.Model):
     exCriteria5 = models.BooleanField(default=False)
     exCriteria6 = models.BooleanField(default=False)
     exDateTime = models.DateTimeField(default=timezone.now)
+    exComment = models.CharField(max_length=255, default="")
     exName = models.ForeignKey(ExInfo, on_delete=models.CASCADE)
 
     def __str__(self):
