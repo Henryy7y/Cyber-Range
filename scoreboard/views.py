@@ -13,6 +13,8 @@ from django.db.models import Q
 from django.db.models import Avg, Case, When 
 from django.db.models import IntegerField
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponseRedirect
 
 def scoreboard_home(request):
     return render(request, 'scoreboard/home.html')
@@ -188,6 +190,9 @@ def instructor_dashboard(request):
     #     exercises_completed=Count('exlog')
     # ).order_by('-average_score')[:10]
 
+    # Get available exercises
+    available_exercises = ExInfo.objects.all().order_by('id')
+
     context = {
         'exercise_records': exercise_records,
         'total_students': total_students,
@@ -196,6 +201,7 @@ def instructor_dashboard(request):
         # 'top_students': top_students,
         'student_search': student_search,
         'exercise_search': exercise_search,
+        'available_exercises': available_exercises,
     }
 
     return render(request, 'scoreboard/instructor_dashboard.html', context)
@@ -259,3 +265,57 @@ def update_comment(request, log_id):
             return JsonResponse({'status': 'error', 'message': f'Error updating comment: {str(e)}'})
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+
+def is_instructor(user):
+    return user.is_staff or user.is_superuser
+
+@login_required
+@user_passes_test(is_instructor)
+def add_exercise(request):
+    if request.method == 'POST':
+        try:
+            exercise = ExInfo.objects.create(
+                exName=request.POST['name'],
+                exType=request.POST['type'],
+                exDifficulty=int(request.POST['difficulty']),
+                exCriteriaDesc1=request.POST['criteria1'],
+                exCriteriaDesc2=request.POST['criteria2'],
+                exCriteriaDesc3=request.POST['criteria3'],
+                exCriteriaDesc4=request.POST['criteria4'],
+                exCriteriaDesc5=request.POST['criteria5'],
+                exCriteriaDesc6=request.POST['criteria6'],
+            )
+            messages.success(request, 'Exercise added successfully')
+            return HttpResponseRedirect(reverse('instructor_dashboard'))
+        except Exception as e:
+            messages.error(request, f'Error adding exercise: {str(e)}')
+    
+    return render(request, 'scoreboard/add_exercise.html')
+
+@login_required
+@user_passes_test(is_instructor)
+def edit_exercise(request, exercise_id):
+    exercise = get_object_or_404(ExInfo, id=exercise_id)
+    
+    if request.method == 'POST':
+        try:
+            exercise.exName = request.POST['name']
+            exercise.exType = request.POST['type']
+            exercise.exDifficulty = int(request.POST['difficulty'])
+            exercise.exCriteriaDesc1 = request.POST['criteria1']
+            exercise.exCriteriaDesc2 = request.POST['criteria2']
+            exercise.exCriteriaDesc3 = request.POST['criteria3']
+            exercise.exCriteriaDesc4 = request.POST['criteria4']
+            exercise.exCriteriaDesc5 = request.POST['criteria5']
+            exercise.exCriteriaDesc6 = request.POST['criteria6']
+            exercise.save()
+            
+            messages.success(request, 'Exercise updated successfully!')
+            return redirect('instructor_dashboard')
+        except Exception as e:
+            messages.error(request, f'Error updating exercise: {str(e)}')
+    
+    context = {
+        'exercise': exercise
+    }
+    return render(request, 'scoreboard/edit_exercise.html', context)
